@@ -1,0 +1,44 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+}
+
+android {
+    namespace 'com.novax.agent'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId "com.novax.agent"
+        minSdk 26
+        targetSdk 34
+        versionCode 1
+        versionName "1.0"
+    }
+
+    buildFeatures {
+        viewBinding false
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+}
+
+dependencies {
+    implementation 'androidx.core:core-ktx:1.13.1'
+    implementation 'androidx.activity:activity-ktx:1.9.0'
+    implementation 'androidx.webkit:webkit:1.11.0'
+}
+
+// Build step reminder: copy the project's /web folder into
+// app/src/main/assets/web before assembling, so MainActivity's
+// file:///android_asset/web/index.html load succeeds. Example (run from
+// the android/ directory before `./gradlew assemble`):
+//
+//   mkdir -p app/src/main/assets/web
+//   cp -r ../web/* app/src/main/assets/web/

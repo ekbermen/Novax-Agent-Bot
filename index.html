@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#0a0a12" />
+<title>NovaX — Voice Agent</title>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<!-- ===================== AUTH SCREEN ===================== -->
+<section id="auth-screen" class="screen screen--auth" aria-label="Sign in">
+  <div class="auth-card">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <h1 class="brand-name">NovaX</h1>
+    </div>
+    <p class="brand-tagline">Your voice-first agent, ready when you speak.</p>
+
+    <div class="auth-tabs" role="tablist">
+      <button class="auth-tab is-active" id="tab-signin" role="tab" aria-selected="true">Sign in</button>
+      <button class="auth-tab" id="tab-signup" role="tab" aria-selected="false">Create account</button>
+    </div>
+
+    <form id="auth-form" class="auth-form" autocomplete="on">
+      <label class="field">
+        <span class="field-label">Username</span>
+        <input id="auth-username" name="username" type="text" autocomplete="username" required minlength="3" maxlength="24" />
+      </label>
+      <label class="field">
+        <span class="field-label">Password</span>
+        <input id="auth-password" name="password" type="password" autocomplete="current-password" required minlength="6" />
+      </label>
+      <p id="auth-error" class="field-error" role="alert" hidden></p>
+      <button type="submit" id="auth-submit" class="btn btn--primary">Sign in</button>
+    </form>
+    <p class="auth-hint">Stored locally on this device (IndexedDB). No data leaves your browser.</p>
+  </div>
+</section>
+
+<!-- ===================== MAIN APP SHELL ===================== -->
+<div id="app-shell" class="app-shell" hidden>
+
+  <header class="topbar">
+    <div class="brand brand--compact">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span class="brand-name">NovaX</span>
+    </div>
+    <div class="topbar-status">
+      <span id="agent-status-dot" class="status-dot" data-state="ready"></span>
+      <span id="agent-status-label">Ready</span>
+    </div>
+    <button id="btn-settings" class="icon-btn" aria-label="Settings">
+      <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M12 8a4 4 0 100 8 4 4 0 000-8zm8.94 4a7.9 7.9 0 00-.14-1.5l2.03-1.58a.5.5 0 00.12-.64l-1.92-3.32a.5.5 0 00-.6-.22l-2.39.96a8 8 0 00-1.3-.75l-.36-2.54A.5.5 0 0016 2h-3.84a.5.5 0 00-.5.42l-.36 2.54c-.46.19-.9.44-1.3.75l-2.39-.96a.5.5 0 00-.6.22L5.05 8.28a.5.5 0 00.12.64l2.03 1.58A7.9 7.9 0 007.06 12c0 .5.05 1 .14 1.5l-2.03 1.58a.5.5 0 00-.12.64l1.92 3.32c.13.22.4.31.6.22l2.39-.96c.4.31.84.56 1.3.75l.36 2.54c.05.24.26.42.5.42H16c.24 0 .45-.18.5-.42l.36-2.54c.46-.19.9-.44 1.3-.75l2.39.96c.2.09.47 0 .6-.22l1.92-3.32a.5.5 0 00-.12-.64l-2.03-1.58c.09-.5.14-1 .14-1.5z" fill="currentColor"/></svg>
+    </button>
+  </header>
+
+  <main id="conversation" class="conversation" aria-live="polite"></main>
+
+  <div id="activity-panel" class="activity-panel" hidden>
+    <span id="activity-text">Listening…</span>
+  </div>
+
+  <footer class="composer">
+    <button id="btn-mic" class="mic-btn" aria-label="Hold to speak" data-listening="false">
+      <span class="mic-ring"></span>
+      <svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path d="M12 15a3 3 0 003-3V6a3 3 0 10-6 0v6a3 3 0 003 3zm5-3a5 5 0 01-10 0H5a7 7 0 006 6.92V21h2v-2.08A7 7 0 0019 12h-2z" fill="currentColor"/></svg>
+    </button>
+    <input id="text-input" class="text-input" type="text" placeholder="Type a command or message…" autocomplete="off" enterkeyhint="send" />
+    <button id="btn-send" class="btn btn--send" aria-label="Send">
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M3 20l18-8L3 4v6l12 2-12 2z" fill="currentColor"/></svg>
+    </button>
+  </footer>
+</div>
+
+<!-- ===================== SETTINGS SCREEN ===================== -->
+<section id="settings-screen" class="screen screen--panel" hidden aria-label="Settings">
+  <header class="panel-header">
+    <button id="btn-back-from-settings" class="icon-btn" aria-label="Back">
+      <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M15 4l-8 8 8 8" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <h2>Settings</h2>
+  </header>
+
+  <div class="panel-body">
+    <section class="settings-group">
+      <h3>AI provider</h3>
+      <label class="field">
+        <span class="field-label">Provider</span>
+        <select id="settings-provider"></select>
+      </label>
+      <label class="field">
+        <span class="field-label">Model</span>
+        <input id="settings-model" type="text" placeholder="e.g. claude-sonnet-4-6" />
+      </label>
+      <label class="field">
+        <span class="field-label">API key</span>
+        <div class="key-field">
+          <input id="settings-apikey" type="password" placeholder="Not set" />
+          <button id="btn-toggle-key" type="button" class="btn btn--ghost btn--small">Show</button>
+        </div>
+      </label>
+      <p class="field-hint">Keys are stored locally in IndexedDB on this device only, and masked after saving.</p>
+    </section>
+
+    <section class="settings-group">
+      <h3>Voice</h3>
+      <label class="switch-row">
+        <span>Speak responses aloud</span>
+        <input id="settings-voice-enabled" type="checkbox" />
+      </label>
+      <p class="field-hint" id="voice-support-note"></p>
+    </section>
+
+    <section class="settings-group">
+      <h3>Theme</h3>
+      <label class="field">
+        <span class="field-label">Appearance</span>
+        <select id="settings-theme">
+          <option value="dark-purple">Dark purple (default)</option>
+          <option value="dark-mono">Dark monochrome</option>
+        </select>
+      </label>
+    </section>
+
+    <section class="settings-group">
+      <h3>Permission Center</h3>
+      <ul id="permission-list" class="permission-list"></ul>
+      <button id="btn-refresh-permissions" class="btn btn--ghost btn--small">Refresh</button>
+    </section>
+
+    <button id="btn-save-settings" class="btn btn--primary">Save settings</button>
+    <button id="btn-signout" class="btn btn--danger-ghost">Sign out</button>
+  </div>
+</section>
+
+<!-- ===================== CONFIRM DIALOG ===================== -->
+<div id="confirm-dialog" class="confirm-overlay" hidden>
+  <div class="confirm-box" role="alertdialog" aria-modal="true">
+    <p id="confirm-message"></p>
+    <div class="confirm-actions">
+      <button id="confirm-cancel" class="btn btn--ghost">Cancel</button>
+      <button id="confirm-ok" class="btn btn--danger">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<script type="module" src="js/app.js"></script>
+</body>
+</html>
