@@ -3,15 +3,18 @@ workflows:
     name: NovaX Agent APK
     max_build_duration: 60
 
+    environment:
+      java: 17
+
     scripts:
-      - name: Set Android SDK location
+      - name: Set Android SDK
         script: |
-          echo "sdk.dir=$ANDROID_SDK_ROOT" > "$CM_BUILD_DIR/local.properties"
+          echo "sdk.dir=$ANDROID_SDK_ROOT" > android/local.properties
 
       - name: Build APK
         script: |
-          chmod +x ./gradlew
-          ./gradlew assembleDebug
+          cd android
+          gradle assembleDebug
 
     artifacts:
-      - app/build/outputs/**/*.apk
+      - android/app/build/outputs/apk/debug/*.apk
