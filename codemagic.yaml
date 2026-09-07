@@ -7,14 +7,11 @@ workflows:
       java: 17
 
     scripts:
-      - name: Set Android SDK
+      - name: Build NovaX APK
         script: |
-          echo "sdk.dir=$ANDROID_SDK_ROOT" > android/local.properties
-
-      - name: Build APK
-        script: |
-          cd android
-          gradle assembleDebug
+          cd novax-agent/android
+          gradle --version
+          gradle assembleDebug --stacktrace
 
     artifacts:
-      - android/app/build/outputs/apk/debug/*.apk
+      - novax-agent/android/app/build/outputs/apk/debug/*.apk
