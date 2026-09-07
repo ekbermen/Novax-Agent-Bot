@@ -1,3 +1,17 @@
-git add codemagic.yaml
-git commit -m 'Add first workflow'
-git push
+workflows:
+  native-android:
+    name: NovaX Agent APK
+    max_build_duration: 60
+
+    scripts:
+      - name: Set Android SDK location
+        script: |
+          echo "sdk.dir=$ANDROID_SDK_ROOT" > "$CM_BUILD_DIR/local.properties"
+
+      - name: Build APK
+        script: |
+          chmod +x ./gradlew
+          ./gradlew assembleDebug
+
+    artifacts:
+      - app/build/outputs/**/*.apk
